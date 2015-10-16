@@ -21,6 +21,8 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
 
+
+
 	socket.on('add user', function (data){
 		socket.join(data.type);
 
@@ -28,7 +30,14 @@ io.sockets.on('connection', function (socket) {
 			patients.push(data);
 			io.to('nurse').emit('new patient', data);
 		}
+		else if (data.type == 'nurse') {
+			socket.emit('patients', {patients: patients});
+		}
 	});
+
+	socket.on('call nurses', function (data) {
+		io.to('nurse').emit('need help', {name: data.name});
+	})
 
 
 });
