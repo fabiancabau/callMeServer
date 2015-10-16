@@ -25,11 +25,13 @@ io.sockets.on('connection', function (socket) {
 		socket.join(data.type);
 
 		if (data.type == 'patient') {
-			patients.push({data: data, socket_id: socket.id});
-			io.to('nurse').emit('new patient', data);
+			patients.push({info: data, socket_id: socket.id});
+			io.to('nurse').emit('new patient', {info: data, socket_id: socket.id});
 		}
 		else if (data.type == 'nurse') {
-			socket.emit('patients', {patients: patients});
+			socket.emit('patients', patients);
+			console.log('Nurse connected, sending patients;');
+			console.log(patients);
 		}
 	});
 
@@ -44,7 +46,7 @@ io.sockets.on('connection', function (socket) {
 			}
 		}
 
-		socket.emit('patients', {patients: patients});
+		socket.emit('patients', patients);
 	});
 
 
