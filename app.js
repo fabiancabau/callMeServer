@@ -21,13 +21,11 @@ app.get('/', function (req, res) {
 
 io.sockets.on('connection', function (socket) {
 
-
-
 	socket.on('add user', function (data){
 		socket.join(data.type);
 
 		if (data.type == 'patient') {
-			patients.push(data);
+			patients.push({data: data, socket_id: socket.id});
 			io.to('nurse').emit('new patient', data);
 		}
 		else if (data.type == 'nurse') {
@@ -37,7 +35,17 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('call nurses', function (data) {
 		io.to('nurse').emit('need help', {name: data.name});
-	})
+	});
+
+	socket.on('disconnect', function() {
+		for (var x = 0; x < patients.length; x++) {
+			if (patients[x].socket_id == socket.id) {
+				patients.splice(x, 1);
+			}
+		}
+
+		socket.emit('patients', {patients: patients});
+	});
 
 
 });
