@@ -22,10 +22,10 @@ app.get('/', function (req, res) {
 io.sockets.on('connection', function (socket) {
 
 	socket.on('add user', function (data){
-		console.log(data.token);
+		socket.join(data.type);
 
 		if (data.type == 'patient') {
-			patients.push({info: data, socket_id: socket.id, token: data.token});
+			patients.push({info: data, socket_id: socket.id});
 			io.to('nurse').emit('new patient', {info: data, socket_id: socket.id});
 		}
 		else if (data.type == 'nurse') {
