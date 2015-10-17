@@ -46,7 +46,7 @@ io.sockets.on('connection', function (socket) {
 			}
 		}
 
-		socket.emit('patients', patients);
+		io.to('nurse').emit('patients', patients);
 	});
 
 
